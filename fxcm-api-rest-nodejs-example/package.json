@@ -4,10 +4,19 @@
 	"description": "FXCM RESTful API client example for node.js",
 	"main": "client5.js",
 	"dependencies": {
-		"socket.io-client": "^1.7.3"
+		"body-parser": "^1.19.0",
+		"events": "^3.1.0",
+		"express": "^4.17.1",
+		"http": "0.0.1-security",
+		"keypress": "^0.2.1",
+		"moment": "^2.24.0",
+		"net": "^1.0.2",
+		"path": "^0.12.7",
+		"socket.io-client": "^2.3.0",
+		"uuid": "^7.0.3",
+		"ws": "^7.2.5"
 	},
-	"devDependencies": {
-	},
+	"devDependencies": {},
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},

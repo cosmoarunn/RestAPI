@@ -65,8 +65,7 @@ var default_callback = (statusCode, requestID, data) => {
 	}
 }
 
-var request_processor = (method, resource, params, callback) => {
-	var requestID = getNextRequestID();
+var request_processor = (method, resource, params, callback) => { 
 	if (typeof(callback) === 'undefined') {
 		callback = default_callback;
 		console.log('request #', requestID, ' sending');
@@ -74,7 +73,7 @@ var request_processor = (method, resource, params, callback) => {
 	if (typeof(method) === 'undefined') {
 		method = "GET";
 	}
-
+    
 	// GET HTTP(S) requests have parameters encoded in URL
 	if (method === "GET") {
 		resource += '/?' + params;
@@ -146,7 +145,7 @@ process.stdin.on('data', function (data) {
 		cli.emit('prompt');
 		return;
 	}
-
+    //input.substr(0, (input.search('{')).trim()
 	// split input into command and parameters
 	var inputloc = input.search('{');
 	if (inputloc === -1) {
@@ -159,7 +158,8 @@ process.stdin.on('data', function (data) {
 	if (cli.eventNames().indexOf(command) >= 0) {
 		if (params.length > 0) {
 			try {
-				cli.emit(command, JSON.parse(params));
+                cli.emit(command, JSON.parse(params));
+                console.log(params)
 			} catch (e) {
 				console.log('could not parse JSON parameters: ', e);
 			}
@@ -191,7 +191,7 @@ cli.on('load', (params) => {
 });
 
 // helper function to send parameters in stringified form, which is required by FXCM REST API
-cli.on('send', (params) => {
+cli.on('send', (params) => { console.log('received upon sending params: '); console.log(params)
 	if (typeof(params.params) !== 'undefined') {
 		params.params = querystring.stringify(params.params);
 	}
