@@ -1,4 +1,3 @@
-
 /*
  *  socknode.js
  *  Package: FXCM Node
@@ -23,7 +22,7 @@ const keypress = require('keypress')
 const {v4: uuid} = require('uuid')
 const qs = require('querystring')
 const readline = require('readline');
-
+const Utils = require('./lib/util')
 const fxcmClient = new (require('./lib/fxcmClient'))(`${config.trading_api_proto}://${config.trading_api_host}`, {token : config.token })
 
 
@@ -65,7 +64,7 @@ class FxcmNode extends EventEmitter {
         this.connected = false 
         this.liveRatesSocket
         //Uncomment authenticate to work live
-        //this.promisify(this.authenticate())
+       // Utils.promisify(this.authenticate())
         
         //initialize console on first run
         if (this.showConsole)
@@ -105,7 +104,10 @@ class FxcmNode extends EventEmitter {
 			}) 
         });
          //use minimal resources to run io socket for live rates
-        this.liveRatesSocket = io('/live')
+        //this.liveRatesSocket = io('/live')
+        //this.tablesSocket = io('/tables')
+
+        //console.log(this.liveRatesSocket)
     }
    
     /**
@@ -156,7 +158,8 @@ class FxcmNode extends EventEmitter {
                     process.exit()    
                     break;
                 case 'live':
-                    process.stdout.write("Live rates for currency pair (GBP/USD):")
+                    console.log(`Live rates for currency pair(${params}):` )
+                    fxcmClient.subscribeLiveRates(params)
                     break;
                 case 'accounts':
                     fxcmClient.getAccounts()
@@ -164,6 +167,9 @@ class FxcmNode extends EventEmitter {
                 case 'products':
                     fxcmClient.getProducts()
                     break;
+                case 'orderbook':
+                    fxcmClient.getProductOrderBook()
+                    break; 
                 case 'send':
                     // command must be registered with cli
 	                if (params.length > 0) {
@@ -341,23 +347,7 @@ class FxcmNode extends EventEmitter {
         process.stdin.resume();
     }
 
-    /**
-     *  Promisify helper
-     * 
-     */
-    promisify(fn) { 
-        let promisify
-        return promisify = fn => (...args) => new Promise((resolve, reject) => {
-                fn(...args, (error, value) => {
-                    if (error) {
-                        reject(error);
-                        return;
-                    }
-                    resolve(value);
-                });
-            })
-    } 
-
+    
 }
 
 module.exports =  new FxcmNode()

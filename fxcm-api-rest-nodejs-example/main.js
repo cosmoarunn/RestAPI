@@ -66,6 +66,7 @@ var default_callback = (statusCode, requestID, data) => {
 }
 
 var request_processor = (method, resource, params, callback) => { 
+	var requestID = getNextRequestID();
 	if (typeof(callback) === 'undefined') {
 		callback = default_callback;
 		console.log('request #', requestID, ' sending');
@@ -73,18 +74,18 @@ var request_processor = (method, resource, params, callback) => {
 	if (typeof(method) === 'undefined') {
 		method = "GET";
 	}
-    
+
 	// GET HTTP(S) requests have parameters encoded in URL
 	if (method === "GET") {
 		resource += '/?' + params;
-	}
+	} console.log(resource)
 	var req = tradinghttp.request({
 			host: trading_api_host,
 			port: trading_api_port,
 			path: resource,
 			method: method,
 			headers: request_headers
-		}, (response) => {
+		}, (response) => { 
 			var data = '';
 			response.on('data', (chunk) => data += chunk); // re-assemble fragmented response data
 			response.on('end', () => {
@@ -93,9 +94,10 @@ var request_processor = (method, resource, params, callback) => {
 		}).on('error', (err) => {
 			callback(0, requestID, err); // this is called when network request fails
 		});
-
+        console.log(req)
 	// non-GET HTTP(S) reuqests pass arguments as data
 	if (method !== "GET" && typeof(params) !== 'undefined') {
+        console.log("writing request.."); console.log(params)
 		req.write(params);
 	}
 	req.end();
